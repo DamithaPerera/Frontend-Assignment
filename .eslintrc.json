@@ -1,0 +1,22 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended"
+  ],
+  "rules": {
+    // Customize any rules you need here.
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
+}
