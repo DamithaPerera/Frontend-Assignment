@@ -1,19 +1,34 @@
-// Defines types for the providers and API details
-
+// The response for the providers API:
 export interface ProvidersResponse {
-    // The providers API returns an object whose keys are provider names.
-    [providerName: string]: any;
+    data: string[];
 }
 
+// The raw API detail as returned by the API:
+export interface RawApiDetail {
+    added: string;
+    info: {
+        title: string;
+        description?: string;
+        version?: string;
+        // ... other fields if necessary
+    };
+    updated: string;
+    swaggerUrl: string;
+    swaggerYamlUrl: string;
+    openapiVer: string;
+    link: string;
+}
+
+// The response for provider APIs:
+export interface ProviderApisResponse {
+    apis: {
+        [apiKey: string]: RawApiDetail;
+    };
+}
+
+// The transformed API detail that our UI will use:
 export interface ApiDetail {
     name: string;
     description?: string;
-    // Extend with additional fields as needed.
-}
-
-export interface ProviderApisResponse {
-    // The provider detail response contains an "apis" object.
-    apis: {
-        [apiName: string]: ApiDetail;
-    };
+    link?: string;
 }

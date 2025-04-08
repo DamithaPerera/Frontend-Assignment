@@ -1,7 +1,7 @@
-import {ProviderApisResponse, ProvidersResponse} from "../types/api";
+import { ProvidersResponse, ProviderApisResponse, ApiDetail } from '../types/api';
 
 export class ApiService {
-    // Fetches the list of provider names.
+    // Fetch providers and return the array from the "data" property.
     async getProviders(): Promise<string[]> {
         try {
             const response = await fetch('https://api.apis.guru/v2/providers.json');
@@ -9,23 +9,29 @@ export class ApiService {
                 throw new Error(`Failed to fetch providers: ${response.statusText}`);
             }
             const data: ProvidersResponse = await response.json();
-            // The provider names are the object keys.
-            return Object.keys(data);
+            return data.data;
         } catch (error) {
             console.error(error);
             throw error;
         }
     }
 
-    // Fetches all the APIs for a given provider.
-    async getProviderApis(providerName: string): Promise<ProviderApisResponse> {
+    // Fetch provider APIs and transform raw data into ApiDetail array.
+    async getProviderApis(providerName: string): Promise<ApiDetail[]> {
         try {
             const response = await fetch(`https://api.apis.guru/v2/${providerName}.json`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch provider APIs for ${providerName}: ${response.statusText}`);
             }
             const data: ProviderApisResponse = await response.json();
-            return data;
+
+            // Transform each API detail entry to match our UI requirements.
+            const apiList: ApiDetail[] = Object.entries(data.apis).map(([key, rawApi]) => ({
+                name: rawApi.info.title || key, // Use title if available, fallback to the key.
+                description: rawApi.info.description,
+                link: rawApi.link,
+            }));
+            return apiList;
         } catch (error) {
             console.error(error);
             throw error;

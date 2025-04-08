@@ -27,9 +27,10 @@ export const Home: React.FC = () => {
     const [error, setError] = useState<string>('');
     const history = useHistory();
 
-    // Memoize the ApiService instance so that it's stable across renders.
+    // Use useMemo so the ApiService instance is not recreated on each render.
     const apiService = useMemo(() => new ApiService(), []);
 
+    // Fetches providers from the API and stores the array from the "data" property.
     const fetchProviders = useCallback(async () => {
         setLoadingProviders(true);
         setError('');
@@ -47,13 +48,14 @@ export const Home: React.FC = () => {
         fetchProviders();
     }, [fetchProviders]);
 
+    // Fetches APIs for a given provider and transforms the data for display.
     const fetchProviderApis = useCallback(
         async (provider: string) => {
             setLoadingApis(true);
             setError('');
             try {
-                const data = await apiService.getProviderApis(provider);
-                const apiList = Object.values(data.apis);
+                // getProviderApis now returns a transformed array of ApiDetail objects.
+                const apiList: ApiDetail[] = await apiService.getProviderApis(provider);
                 if (apiList.length === 0) {
                     setError('No APIs found for this provider.');
                 }
@@ -68,13 +70,15 @@ export const Home: React.FC = () => {
         [apiService]
     );
 
+    // Handle when a provider is selected from the sidebar.
     const handleProviderSelect = (provider: string) => {
         setSelectedProvider(provider);
         fetchProviderApis(provider);
+        setSidebarOpen(false);
     };
 
+    // Handle selecting a specific API from the list.
     const handleApiSelect = (api: ApiDetail) => {
-        // Navigate to the API Details screen.
         history.push({
             pathname: '/api-details',
             state: { api },
