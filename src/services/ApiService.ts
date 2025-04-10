@@ -1,4 +1,4 @@
-import { ProvidersResponse, ProviderApisResponse, ApiDetail } from '../types/api';
+import {ProvidersResponse, ApiDetail, RawApiDetail} from '../types/api';
 
 export class ApiService {
     // Fetch providers and return the array from the "data" property.
@@ -23,15 +23,35 @@ export class ApiService {
             if (!response.ok) {
                 throw new Error(`Failed to fetch provider APIs for ${providerName}: ${response.statusText}`);
             }
-            const data: ProviderApisResponse = await response.json();
+            const data = await response.json();
 
-            // Transform each API detail entry to match our UI requirements.
-            const apiList: ApiDetail[] = Object.entries(data.apis).map(([key, rawApi]) => ({
-                name: rawApi.info.title || key, // Use title if available, fallback to the key.
-                description: rawApi.info.description,
-                link: rawApi.link,
-            }));
-            return apiList;
+            return Object.entries(data.apis).map(([_, raw]) => {
+                const r = raw as RawApiDetail;
+
+                return {
+                    name: r.info.title,
+                    description: r.info.description,
+                    version: r.info.version,
+                    contact: {
+                        name: r.info.contact?.name,
+                        email: r.info.contact?.email,
+                        url: r.info.contact?.url,
+                        twitter: r.info.contact?.['x-twitter'],
+                    },
+                    categories: r.info['x-apisguru-categories'],
+                    logo: r.info['x-logo']?.url,
+                    origin: r.info['x-origin'],
+                    providerName: r.info['x-providerName'],
+                    serviceName: r.info['x-serviceName'],
+                    unofficialSpec: r.info['x-unofficialSpec'],
+                    added: r.added,
+                    updated: r.updated,
+                    swaggerUrl: r.swaggerUrl,
+                    swaggerYamlUrl: r.swaggerYamlUrl,
+                    openapiVer: r.openapiVer,
+                    link: r.link,
+                };
+            });
         } catch (error) {
             console.error(error);
             throw error;

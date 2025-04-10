@@ -10,7 +10,24 @@ export interface RawApiDetail {
         title: string;
         description?: string;
         version?: string;
-        // ... other fields if necessary
+        contact?: {
+            name?: string;
+            email?: string;
+            url?: string;
+            'x-twitter'?: string;
+        };
+        'x-apisguru-categories'?: string[];
+        'x-logo'?: {
+            url: string;
+        };
+        'x-origin'?: {
+            format: string;
+            url: string;
+            version: string;
+        }[];
+        'x-providerName'?: string;
+        'x-serviceName'?: string;
+        'x-unofficialSpec'?: boolean;
     };
     updated: string;
     swaggerUrl: string;
@@ -18,6 +35,7 @@ export interface RawApiDetail {
     openapiVer: string;
     link: string;
 }
+
 
 // The response for provider APIs:
 export interface ProviderApisResponse {
@@ -30,5 +48,28 @@ export interface ProviderApisResponse {
 export interface ApiDetail {
     name: string;
     description?: string;
+    version?: string;
+    contact?: {
+        name?: string;
+        email?: string;
+        url?: string;
+        twitter?: string;
+    };
+    categories?: string[];
+    logo?: string;
+    origin?: {
+        format: string;
+        url: string;
+        version: string;
+    }[];
+    providerName?: string;
+    serviceName?: string;
+    unofficialSpec?: boolean;
+    added?: string;
+    updated?: string;
+    swaggerUrl?: string;
+    swaggerYamlUrl?: string;
+    openapiVer?: string;
     link?: string;
 }
+
